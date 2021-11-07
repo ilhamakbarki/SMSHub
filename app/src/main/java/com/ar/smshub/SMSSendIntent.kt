@@ -13,6 +13,7 @@ import org.jetbrains.anko.doAsync
 class SMSSendIntent : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         var status: String
+        var mainActivity: MainActivity = context as MainActivity
 
         var delivered = intent!!.getIntExtra("delivered", 0)
         if (delivered == 1) {
@@ -28,6 +29,10 @@ class SMSSendIntent : BroadcastReceiver() {
             }
 
         }
+
+        mainActivity.runOnUiThread(Runnable {
+            mainActivity.logMain("Status Send Message : " +status , true)
+        })
 
         var statusUrl = intent!!.getStringExtra("statusURL")
         var deviceId = intent!!.getStringExtra("deviceId")
