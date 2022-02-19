@@ -64,6 +64,7 @@ class SettingsFragment : Fragment() {
         val txtReceiveURL: EditText = view.findViewById(R.id.textReceiveURL)
         val txtInterval: EditText = view.findViewById(R.id.textInterval)
         val txtDeviceId: EditText = view.findViewById(R.id.textDeviceId)
+        val txtSmsLength: EditText = view.findViewById(R.id.textSmsLength)
         val switchIsEnabled: Switch = view.findViewById(R.id.switchIsEnabled)
 
         txtInterval.setText(settingsManager.interval.toString())
@@ -72,6 +73,7 @@ class SettingsFragment : Fragment() {
         txtReceiveURL.setText(settingsManager.receiveURL)
         txtStatusURL.setText(settingsManager.statusURL)
         txtDeviceId.setText(settingsManager.deviceId)
+        txtSmsLength.setText(settingsManager.maxSmsLength.toString())
 
         //save
         btnSave.setOnClickListener {
@@ -81,7 +83,8 @@ class SettingsFragment : Fragment() {
                 txtSendURL.text.toString(),
                 txtReceiveURL.text.toString(),
                 txtStatusURL.text.toString(),
-                txtDeviceId.text.toString()
+                txtDeviceId.text.toString(),
+                txtSmsLength.text.toString().toInt()
             )
             val mainFragment = fragmentManager.findFragmentByTag("MAIN") as MainFragment
             val transaction = fragmentManager.beginTransaction()
@@ -118,7 +121,8 @@ class SettingsFragment : Fragment() {
                     txtSendURL.text.toString(),
                     txtReceiveURL.text.toString(),
                     txtStatusURL.text.toString(),
-                    txtDeviceId.text.toString()
+                    txtDeviceId.text.toString(),
+                    txtSmsLength.text.toString().toInt()
                 )
             }
             mainActivity.updateTimer()

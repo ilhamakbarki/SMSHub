@@ -9,6 +9,7 @@ import com.beust.klaxon.Klaxon
 import java.util.*
 import khttp.responses.Response
 import org.json.JSONObject
+import kotlin.collections.ArrayList
 
 class SMS(var message: String, var number: String, var messageId: String)
 
@@ -58,14 +59,13 @@ class SendTask constructor(_settings: SettingsManager, _context: Context) : Time
         if (canSend) {
             try {
                 Log.d("-->", "Trying to send msg")
+                settings.updateSettings()
                 smsArray?.forEach {
                     val sentIn = Intent(mainActivity.SENT_SMS_FLAG)
-                    settings.updateSettings()
                     sentIn.putExtra("messageId", it!!.messageId)
                     sentIn.putExtra("statusURL", settings.statusURL)
                     sentIn.putExtra("deviceId", settings.deviceId)
                     sentIn.putExtra("delivered", 0)
-
 
                     val sentPIn = PendingIntent.getBroadcast(mainActivity, mainActivity.nextRequestCode(), sentIn,0)
 
@@ -79,10 +79,22 @@ class SendTask constructor(_settings: SettingsManager, _context: Context) : Time
                     val deliverPIn = PendingIntent.getBroadcast(mainActivity, mainActivity.nextRequestCode(), deliverIn, 0)
 
                     val smsManager = SmsManager.getDefault() as SmsManager
-                    smsManager.sendTextMessage(it!!.number, null, it!!.message, sentPIn, deliverPIn)
-                    mainActivity.runOnUiThread(Runnable {
-                        mainActivity.logMain("Sent to: " + it!!.number + " - id: " + it!!.messageId + " - message: " + it!!.message)
-                    })
+                    val message = it!!.message
+                    if(message.length>settings.maxSmsLength){
+                        for (i in message.indices step settings.maxSmsLength){
+                            val body = message.substring(i, Math.min(message.length, i+settings.maxSmsLength))
+                            smsManager.sendTextMessage(it!!.number, null, body, sentPIn, deliverPIn)
+                            mainActivity.runOnUiThread(Runnable {
+                                mainActivity.logMain("Sent to: " + it!!.number + " - id: " + it!!.messageId + " - message: " + body)
+                            })
+                        }
+                    }else{
+                        smsManager.sendTextMessage(it!!.number, null, message, sentPIn, deliverPIn)
+                        mainActivity.runOnUiThread(Runnable {
+                            mainActivity.logMain("Sent to: " + it!!.number + " - id: " + it!!.messageId + " - message: " + it!!.message)
+                        })
+                    }
+
                     Log.d("-->", "Sent!")
 
                     Thread.sleep(500)
@@ -92,7 +104,6 @@ class SendTask constructor(_settings: SettingsManager, _context: Context) : Time
                 Log.e("-->", e.message)
             }
         }
-
 
     }
 

@@ -161,28 +161,13 @@ class MainActivity : AppCompatActivity() {
             )
             != PackageManager.PERMISSION_GRANTED
         ) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.SEND_SMS
-                )
-            ) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.SEND_SMS),
-                    MY_PERMISSIONS_REQUEST_SEND_SMS
-                )
-
-            }
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.SEND_SMS),
+                MY_PERMISSIONS_REQUEST_SEND_SMS
+            )
         } else {
-            // Permission has already been granted
+            //Toast.makeText(this, "Already granted to Send SMS", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -218,21 +203,15 @@ class MainActivity : AppCompatActivity() {
     ) {
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_SEND_SMS -> {
-                // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
+                    Toast.makeText(this, "Already granted to Send SMS", Toast.LENGTH_SHORT).show();
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    Toast.makeText(this, "Cant Send SMS because not granted", Toast.LENGTH_SHORT).show();
+                    this.finish()
                 }
                 return
             }
-
-            // Add other 'when' lines to check for other
-            // permissions this app might request.
             else -> {
-                // Ignore all other requests.
             }
         }
     }

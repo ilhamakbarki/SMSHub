@@ -14,6 +14,7 @@ class SettingsManager {
     var statusURL: String = ""
     var receiveURL: String = ""
     var deviceId: String = ""
+    var maxSmsLength : Int = 160
     var sharedPref: SharedPreferences
     var context: Context
 
@@ -33,6 +34,7 @@ class SettingsManager {
         val defaultReceiveURL = context.resources.getString(R.string.preference_default_receive_url)
         val defaultStatusURL = context.resources.getString(R.string.preference_default_status_url)
         val defaultDeviceId = context.resources.getString(R.string.preference_default_device_id)
+        val defaultSmsLenght = context.resources.getInteger(R.integer.preference_default_sms_length)
 
         this.isSendEnabled = sharedPref!!.getBoolean(context.getString(R.string.preference_send_enabled), defaultSendEnabled)
         this.interval = sharedPref!!.getInt(context.getString(R.string.preference_interval), defaultInterval)
@@ -40,9 +42,10 @@ class SettingsManager {
         this.receiveURL = sharedPref!!.getString(context.getString(R.string.preference_receive_url), defaultReceiveURL)
         this.statusURL = sharedPref!!.getString(context.getString(R.string.preference_status_url), defaultStatusURL)
         this.deviceId = sharedPref!!.getString(context.getString(R.string.preference_device_id), defaultDeviceId)
+        this.maxSmsLength = sharedPref!!.getInt(context.getString(R.string.preference_sms_length), defaultSmsLenght)
     }
 
-    fun setSettings(_isSendEnabled: Boolean, _interval: Int, _sendURL: String,_receiveURL: String,_statusURL: String, _deviceId: String){
+    fun setSettings(_isSendEnabled: Boolean, _interval: Int, _sendURL: String,_receiveURL: String,_statusURL: String, _deviceId: String, _smsLength:Int){
         this.interval = _interval
         this.sendURL = _sendURL
         this.receiveURL = _receiveURL
@@ -56,6 +59,7 @@ class SettingsManager {
             putString(context.getString(R.string.preference_status_url), _statusURL)
             putString(context.getString(R.string.preference_device_id), _deviceId)
             putInt(context.getString(R.string.preference_interval), _interval)
+            putInt(context.getString(R.string.preference_sms_length), _smsLength)
             commit()
             Log.d("--->_isSendEnabled", _isSendEnabled.toString())
             Toast.makeText(context, "Settings updated", Toast.LENGTH_SHORT).show()
