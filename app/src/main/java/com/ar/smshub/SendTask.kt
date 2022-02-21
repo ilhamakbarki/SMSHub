@@ -75,25 +75,20 @@ class SendTask constructor(_settings: SettingsManager, _context: Context) : Time
                     deliverIn.putExtra("deviceId", settings.deviceId)
                     deliverIn.putExtra("delivered", 1)
 
-
                     val deliverPIn = PendingIntent.getBroadcast(mainActivity, mainActivity.nextRequestCode(), deliverIn, 0)
 
+                    var sentsPIntent = arrayListOf<PendingIntent>()
+                    var deliveriesPIntent = arrayListOf<PendingIntent>()
+
                     val smsManager = SmsManager.getDefault() as SmsManager
-                    val message = it!!.message
-                    if(message.length>settings.maxSmsLength){
-                        for (i in message.indices step settings.maxSmsLength){
-                            val body = message.substring(i, Math.min(message.length, i+settings.maxSmsLength))
-                            smsManager.sendTextMessage(it!!.number, null, body, sentPIn, deliverPIn)
-                            mainActivity.runOnUiThread(Runnable {
-                                mainActivity.logMain("Sent to: " + it!!.number + " - id: " + it!!.messageId + " - message: " + body)
-                            })
-                        }
-                    }else{
-                        smsManager.sendTextMessage(it!!.number, null, message, sentPIn, deliverPIn)
-                        mainActivity.runOnUiThread(Runnable {
-                            mainActivity.logMain("Sent to: " + it!!.number + " - id: " + it!!.messageId + " - message: " + it!!.message)
-                        })
-                    }
+                    val message = smsManager.divideMessage(it!!.message)
+                    sentsPIntent.add(sentPIn)
+                    deliveriesPIntent.add(deliverPIn)
+
+                    smsManager.sendMultipartTextMessage(it!!.number, null, message, sentsPIntent, deliveriesPIntent)
+                    mainActivity.runOnUiThread(Runnable {
+                        mainActivity.logMain("Sent to: " + it.number + " - id: " + it.messageId + " - message: " + it.message)
+                    })
 
                     Log.d("-->", "Sent!")
 

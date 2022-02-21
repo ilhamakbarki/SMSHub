@@ -62,16 +62,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onStop() {
-        /*
         try {
             unregisterReceiver(sendIntent)
             unregisterReceiver(deliverIntent)
             unregisterReceiver(broadcastReceiver)
         } catch (e: IllegalArgumentException) {
             Log.d("-->", "No receivers")
-        }*/
+        }
         super.onStop()
-
     }
 
 
